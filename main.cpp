@@ -110,15 +110,25 @@ int main(int argc, char* argv[]) {
 		printf("Urgent Pointer : 0x%04x\n", htons(tcph->urgent));
 			
 		// ALL TCP Data
-		for(int i=14+iph->H_length*4+tcph->H_length*4; i<14+ntohs(iph->P_length) ;i++)
-		{			
-			if((i-14-iph->H_length*4-tcph->H_length*4) %16 == 0)
-			{
-				printf("\n");		
+		if(ntohs(iph->P_length)-iph->H_length*4-tcph->H_length*4 < 16 )
+		{
+			for(int i=14+iph->H_length*4+tcph->H_length*4; i<14+ntohs(iph->P_length) ;i++)
+			{			
+				if((i-14-iph->H_length*4-tcph->H_length*4) %16 == 0)
+				{
+					printf("\n");		
+				}	
+				printf("%02x ", packet[i]);
 			}	
-			printf("%02x ", packet[i]);
-		}	
-		printf("\n");
+			printf("\n");
+		}else
+		{
+			int loc = 14+iph->H_length*4+ tcph->H_length*4;
+
+			for(int i=0;i<16;i++)
+				printf("%02x ", packet[loc+i]);
+			printf("\n");
+		}
 	}
     }
     printf("====================================\n");
